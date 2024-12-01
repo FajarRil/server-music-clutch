@@ -10,6 +10,11 @@ from pydub import AudioSegment
 
 class AudioRecognizer:
     def __init__(self, model_path, metadata_path):
+        physical_devices = tf.config.experimental.list_physical_devices("GPU")
+        if physical_devices:
+            for device in physical_devices:
+                tf.config.experimental.set_memory_growth(device, True)
+
         self.model = tf.keras.models.load_model(model_path)
 
         with open(metadata_path, "r") as f:
@@ -23,7 +28,7 @@ class AudioRecognizer:
     def convert_webm_to_wav(self, webm_file):
         try:
             os.makedirs("/tmp", exist_ok=True)
-            
+
             temp_webm = "/tmp/input.webm"
             temp_wav = "/tmp/output.wav"
 
